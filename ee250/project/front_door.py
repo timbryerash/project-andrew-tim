@@ -1,4 +1,4 @@
-# Front Door RPi
+# Front Door RPi (Andrew)
 
 # BELOW IS CODE FROM LAB 5
 
@@ -23,16 +23,6 @@ def on_connect(client, userdata, flags, rc):
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
-
-def ledcallback(client, userdata, msg):
-    ledstatus = str(msg.payload, "utf-8") #LED_ON or LED_OFF
-    print(ledstatus)
-    if ledstatus == "LED_ON":
-        with lock:
-            grovepi.digitalWrite(led,1) #led turns on
-    elif ledstatus == "LED_OFF":
-        with lock:
-            grovepi.digitalWrite(led,0) #led turns off
 
 def lcdcallback(client, userdata, msg):
     keyvalue = str(msg.payload, "utf-8") #w, a, s, or d
@@ -59,14 +49,13 @@ if __name__ == '__main__':
     #initiate ports
     button = 2
     ultrasonic_ranger = 3
-    led = 4
 
     grovepi.pinMode(button,"INPUT")
 
     #splashscreen
     with lock:
         grove_rgb_lcd.setRGB(255,255,255)
-        grove_rgb_lcd.setText("Tim & Andrew\nEE 250")
+        grove_rgb_lcd.setText("Tim & Andrew\nFront Door")
         time.sleep(2)
         grove_rgb_lcd.setText("")
 
