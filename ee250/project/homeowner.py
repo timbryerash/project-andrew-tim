@@ -13,27 +13,38 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
     #subscribe to topics of interest here
-    #subscribe to lcd then callback
-    client.subscribe("timandrew/lcd")
-    client.message_callback_add("timandrew/lcd", lcdcallback)
+    #subscribe to ultrasonicRanger then callback
+    client.subscribe("timandrew/door_status")
+    client.message_callback_add("timandrew/door_status", door_status_callback)
+    #subscribe to button then callback
+    client.subscribe("timandrew/doorbell")
+    client.message_callback_add("timandrew/doorbell", doorbell_callback)
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
-def lcdcallback(client, userdata, msg):
-    keyvalue = str(msg.payload, "utf-8") #w, a, s, or d
-    print(keyvalue)
-    with lock:
-        grove_rgb_lcd.setText_norefresh(f"{keyvalue}") #display key on lcd
-        if keyvalue == "w":
-            grove_rgb_lcd.setRGB(255,255,255) #make white
-        if keyvalue == "a":
-            grove_rgb_lcd.setRGB(255,0,0) #make red
-        if keyvalue == "s":
-            grove_rgb_lcd.setRGB(0,255,0) #make green
-        if keyvalue == "d":
-            grove_rgb_lcd.setRGB(0,0,255) #make blue
+def door_status_callback(client, userdata, msg):
+    door_status = str(msg.payload, "utf-8")
+    if door_status == "Front Door Secure":
+    	with lock:
+    		grove_rgb_lcd.setRGB(255,255,255)
+    		grove_rgb_lcd.setText("Front Door\nSecure")
+    elif door_status == "Motion Detected":
+    	with lock:
+    		grove_rgb_lcd.setRGB(255,255,255)
+    		grove_rgb_lcd.setText("Motion\nDetected")
+    elif door_status == "SAFETY MODE":
+    	with lock:
+    		grove_rgb_lcd.setRGB(255,0,0)
+    		grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
+    	with lock:
+    		grovepi.digitalWrite(buzzer, 1)
+    		time.sleep(0.1)
+    		grovepi.digitalWrite(buzzer, 0)
+
+def front_door_button_callback(client, userdata, msg):
+    print(str(msg.payload, "utf-8")) #print "Button pressed!" if called
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -44,8 +55,10 @@ if __name__ == '__main__':
     client.loop_start()
 
     #initiate ports
-    button = 2
+    buzzer = 2
+    button = 4
 
+    grovepi.pinMode(buzzer, "OUTPUT")
     grovepi.pinMode(button,"INPUT")
 
     #splashscreen
@@ -56,9 +69,20 @@ if __name__ == '__main__':
         grove_rgb_lcd.setText("")
 
     while True:
+    	if safety_mode:
+    		with lock:
+    			grove_rgb_lcd.setRGB(255,0,0)
+    			grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
+    		with lock:
+    			grovepi.digitalWrite(buzzer, 1)
+    			time.sleep(0.1)
+    			grovepi.digitalWrite(buzzer, 0)
+
         with lock:
             buttonvalue = grovepi.digitalRead(button) #check button reading
         if buttonvalue:
-            client.publish("timandrew/button", "Button pressed!") #if button is pressed, publish string to button topic
+            client.publish("timandrew/homeowner_button", "Button pressed!") #if button is pressed, publish string to button topic
+        with lock:
+        	grovepi.digitalWrite(buzzer, 1)
 
         time.sleep(1)
