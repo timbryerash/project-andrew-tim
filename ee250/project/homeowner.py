@@ -33,6 +33,8 @@ def door_status_callback(client, userdata, msg):
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
     			grove_rgb_lcd.setText_norefresh("Motion Detected ")
+    		with lock:
+    			grovepi.digitalWrite(buzzer, 0)
     	elif door_status == "SAFETY MODE":
     		print(door_status)
     		with lock:
@@ -45,6 +47,8 @@ def door_status_callback(client, userdata, msg):
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
     			grove_rgb_lcd.setText_norefresh("No Motion       ")
+    		with lock:
+    			grovepi.digitalWrite(buzzer, 0)
 
 def doorbell_callback(client, userdata, msg):
     with lock:
@@ -102,4 +106,6 @@ if __name__ == '__main__':
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
         			grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: Unlocked")
+        		with lock:
+        			grovepi.digitalWrite(buzzer, 0)
         time.sleep(1)
