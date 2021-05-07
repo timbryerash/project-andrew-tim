@@ -27,7 +27,6 @@ def on_message(client, userdata, msg):
 
 def door_status_callback(client, userdata, msg):
     door_status = str(msg.payload, "utf-8")
-    time.sleep(1)
     if lock_status is 0:
     	if door_status == "Motion Detected":
     		with lock:
