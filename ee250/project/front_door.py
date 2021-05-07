@@ -25,11 +25,11 @@ def on_message(client, userdata, msg):
 def homeowner_button_callback(client, userdata, msg):
     lock_status = str(msg.payload, "utf-8")
     print(lock_status)
-    if lock_status == "Unlocked":
-        with lock:
-            setRGB(0,100,250)
-            setText_norefresh("WELCOME HOME")
-            time.sleep(2)
+    #if lock_status == "Unlocked":
+     #   with lock:
+      #      setRGB(0,100,250)
+       #     setText_norefresh("WELCOME HOME")
+        #    time.sleep(2)
             
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
