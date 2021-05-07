@@ -24,22 +24,27 @@ def on_message(client, userdata, msg):
 
 def door_status_callback(client, userdata, msg):
     door_status = str(msg.payload, "utf-8")
-    if door_status == "Motion Detected":
-    	with lock:
-    		grove_rgb_lcd.setRGB(255,255,255)
-    		grove_rgb_lcd.setText("Motion\nDetected")
-    elif door_status == "SAFETY MODE":
-    	with lock:
-    		grove_rgb_lcd.setRGB(255,0,0)
-    		grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
-    	with lock:
-    		grovepi.digitalWrite(buzzer, 1)
-    		time.sleep(0.1)
-    		grovepi.digitalWrite(buzzer, 0)
-    else:
-    	with lock:
-    		grove_rgb_lcd.setRGB(255,255,255)
-    		grove_rgb_lcd.setText("Front Door\nSecure")
+    if lock_status is 0:
+	    if door_status == "Motion Detected":
+	    	with lock:
+	    		grove_rgb_lcd.setRGB(255,255,255)
+	    		grove_rgb_lcd.setText("Motion\nDetected")
+	    elif door_status == "SAFETY MODE":
+	    	with lock:
+	    		grove_rgb_lcd.setRGB(255,0,0)
+	    		grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
+	    	with lock:
+	    		grovepi.digitalWrite(buzzer, 1)
+	    		time.sleep(0.1)
+	    		grovepi.digitalWrite(buzzer, 0)
+	    else:
+	    	with lock:
+	    		grove_rgb_lcd.setRGB(255,255,255)
+	    		grove_rgb_lcd.setText("Front Door\nSecure")
+	else:
+		with lock:
+	    		grove_rgb_lcd.setRGB(0,0,255)
+	    		grove_rgb_lcd.setText("Door\nUnlocked")
 
 def doorbell_callback(client, userdata, msg):
     with lock:
