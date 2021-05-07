@@ -48,12 +48,12 @@ if __name__ == '__main__':
     # state = 0 --> safe/locked
     # state = 1 --> motion detected
     # state = 2 --> safety mode
-    # state = 3 --> unlocked
-    # state = 4 --> ringing doobell / waiting for access
+    # state = 3 --> ringing doobell / waiting for access
+    # state = 4 --> unlocked
 
     state = 0
     lock_status = 0 # Initiate locked
-    timer = 5
+    timer = 20
     
 while True:
     
@@ -62,7 +62,7 @@ while True:
         sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
     
     # state 1 --> motion detected 
-    if (sensor_value <= 30 and state is 0):
+    if (sensor_value <= 30 and state is 0 lock_status is 0):
         client.publish("door_status_callback", "Motion Detected")
         while (timer >=  0):
             state = 1
@@ -73,7 +73,7 @@ while True:
                 time.sleep(0.4)
         
     # state 2 --> safety mode
-    if (timer is -1 and state is 1):
+    if (timer is -1 and state is 1 and lock_status is 0):
         client.publish("door_status_callback", "SAFETY MODE")
         state = 2
         while (state is 2):
@@ -82,8 +82,9 @@ while True:
                 grove_rgb_lcd.setText("SAFETY MODE \nWaiting for resp")
                 time.sleep(10)
         
-    # state 4 : doorbell --> waiting for access
-    elif (grovepi.digitalRead(button) is 1 and state is 0):
+    # state 3 : doorbell --> waiting for access
+    elif (grovepi.digitalRead(button) is 1 and state is 0 and lock_status is 0):
+        state = 3
         client.publish("doorbell_callback", "Doorbell Pressed")
         with lock:
             setRGB(255,255,0)
@@ -91,8 +92,18 @@ while True:
             setText("Ringing doorbell \nWaiting for resp")
             time.sleep(2)
             
+    # state 4: unlocked 
+    elif ((state is 1 or state is 2 or state is 3) and lock_status is 1):
+        state = 0
+        with lock:
+            setRGB(0,255,0)
+            grove_rgb_lcd.setText("")
+            setText("Door Unlocked")
+            time.sleep(2)
+            
     else:
         state = 0
+        client.publish("door_status_callback", "Front Door\nSecure")
         with lock:
             setRGB(0,255,0)
             setText_norefresh("SENSOR ACTIVE   ")
