@@ -27,7 +27,7 @@ def homeowner_button_callback(client, userdata, msg):
     print(lock_status)
     if lock_status == "Unlocked":
         with lock:
-            setRGB(0,255,0)
+            setRGB(0,100,250)
             setText_norefresh("WELCOME HOME")
             time.sleep(2)
             
@@ -65,6 +65,7 @@ while True:
     with lock:
         # Read angle value from potentiometer
         sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
+        client.publish("timandrew/motion_sensor",sensor_value)
         
     if button_value: 
         client.publish("timandrew/doorbell", "Doorbell Rung")
@@ -90,6 +91,7 @@ while True:
         
     # state 2 --> safety mode
     elif (timer is -1 and state is 1):
+        client.publish("timandrew/door_status", "SAFETY MODE")
         state = 2
         while (state is 2):
             with lock:
