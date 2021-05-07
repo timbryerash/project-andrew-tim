@@ -77,8 +77,8 @@ if __name__ == '__main__':
         with lock:
         	grove_rgb_lcd.setRGB(255,0,0)
         	grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
-    	with lock:
-    		grovepi.digitalWrite(buzzer, 1)
-    		time.sleep(0.1)
-    		grovepi.digitalWrite(buzzer, 0)
+        with lock:
+        	grovepi.digitalWrite(buzzer, 1)
+        	time.sleep(0.1)
+        	grovepi.digitalWrite(buzzer, 0)
         time.sleep(1)
