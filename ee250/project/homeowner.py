@@ -45,6 +45,9 @@ def doorbell_callback(client, userdata, msg):
     with lock:
     		grove_rgb_lcd.setRGB(0,255,0)
     		grove_rgb_lcd.setText("Doorbell\nRung")
+    		grovepi.digitalWrite(buzzer, 1)
+    		time.sleep(0.1)
+    		grovepi.digitalWrite(buzzer, 0)
     time.sleep(1)
 
 if __name__ == '__main__':
