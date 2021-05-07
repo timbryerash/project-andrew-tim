@@ -80,7 +80,6 @@ while True:
         
     # state 1 --> motion detected
     if (sensor_value <= 30 and state is 0):
-        state = 1
         while (timer >=  0):
             client.publish("timandrew/door_status", "Motion Detected")
             with lock:
@@ -96,22 +95,21 @@ while True:
             client.publish("timandrew/door_status", "SAFETY MODE")
             with lock:
                 setRGB(255,255,0)
-                grove_rgb_lcd.setText("SAFETY MODE \nWaiting for resp")
-                time.sleep(10)
+                setText_norefresh("SAFETY MODE \nWaiting for resp")
                 
     #state 0 --> sensor active
-    else:
-        state = 0
-        while(state == 0):
-            client.publish("timandrew/door_status", "SAFETY MODE")
-            with lock:
-                setRGB(0,255,0)
-                setText_norefresh("SENSOR ACTIVE   ")
+    elif (state == 0):
+        client.publish("timandrew/door_status", "NO MOTION")
+        with lock:
+            setRGB(0,255,0)
+            setText_norefresh("SENSOR ACTIVE   ")
                 
 
                 
     
             
+
+
 
 
 
