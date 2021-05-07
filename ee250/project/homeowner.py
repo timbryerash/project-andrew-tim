@@ -32,26 +32,26 @@ def door_status_callback(client, userdata, msg):
     	if door_status == "Motion Detected":
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
-    			grove_rgb_lcd.setText_norefresh("Motion Detected \n")
+    			grove_rgb_lcd.setText_norefresh("Motion Detected ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 0)
     	elif door_status == "SAFETY MODE":
     		with lock:
     			grove_rgb_lcd.setRGB(255,0,0)
-    			grove_rgb_lcd.setText_norefresh("SAFETY MODE     \n")
+    			grove_rgb_lcd.setText_norefresh("SAFETY MODE     ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 1)
     	else:
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
-    			grove_rgb_lcd.setText_norefresh("No Motion       \n")
+    			grove_rgb_lcd.setText_norefresh("No Motion       ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 0)
 
 def doorbell_callback(client, userdata, msg):
     with lock:
     		grove_rgb_lcd.setRGB(0,0,255)
-    		grove_rgb_lcd.setText_norefresh("Doorbell Rung   \n")
+    		grove_rgb_lcd.setText_norefresh("Doorbell Rung   ")
     		grovepi.digitalWrite(buzzer, 1)
     		time.sleep(0.1)
     		grovepi.digitalWrite(buzzer, 0)
@@ -90,6 +90,11 @@ if __name__ == '__main__':
         time.sleep(2)
         grove_rgb_lcd.setText("")
 
+    client.publish("timandrew/homeowner_button", "Locked")
+    with lock:
+    	grove_rgb_lcd.setRGB(255,255,255)
+    	grove_rgb_lcd.setText_norefresh("Locking Door... \nStatus: Locked  ")
+
     while True:
         with lock:
             buttonvalue = grovepi.digitalRead(button) #check button reading
@@ -99,13 +104,13 @@ if __name__ == '__main__':
         		client.publish("timandrew/homeowner_button", "Locked")
         		with lock:
         			grove_rgb_lcd.setRGB(255,255,255)
-        			grove_rgb_lcd.setText("Locking Door... \nStatus: Locked  ")
+        			grove_rgb_lcd.setText_norefresh("Locking Door... \nStatus: Locked  ")
         	else:
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
         			grove_rgb_lcd.setRGB(0,255,0)
-        			grove_rgb_lcd.setText("Door is Open    \nStatus: Unlocked")
+        			grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: Unlocked")
         		with lock:
         			grovepi.digitalWrite(buzzer, 0)
         time.sleep(1)
