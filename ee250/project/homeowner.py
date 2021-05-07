@@ -48,7 +48,7 @@ def door_status_callback(client, userdata, msg):
     			grovepi.digitalWrite(buzzer, 0)
 
 def doorbell_callback(client, userdata, msg):
-	if lockstatus:
+	if lock_status:
 		with lock:
 			grove_rgb_lcd.setRGB(0,0,255)
 			grove_rgb_lcd.setText_norefresh("Doorbell Rung   \nStatus: Unlocked")
