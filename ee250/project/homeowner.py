@@ -53,7 +53,7 @@ def doorbell_callback(client, userdata, msg):
 			grove_rgb_lcd.setRGB(0,0,255)
 			grove_rgb_lcd.setText_norefresh("Doorbell Rung   \nStatus: Unlocked")
 			grovepi.digitalWrite(buzzer, 1)
-			time.sleep(0.5)
+			time.sleep(0.3)
 			grovepi.digitalWrite(buzzer, 0)
 			time.sleep(0.1)
 			grovepi.digitalWrite(buzzer, 1)
