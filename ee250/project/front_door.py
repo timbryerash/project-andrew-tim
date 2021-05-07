@@ -45,11 +45,11 @@ if __name__ == '__main__':
 
     grovepi.pinMode(button,"INPUT")
 
-    # state = 0 --> safe/locked
-    # state = 1 --> motion detected
-    # state = 2 --> safety mode
-    # state = 3 --> ringing doobell / waiting for access
-    # state = 4 --> unlocked
+    # state = 0 --> Sensor active
+    # state = 1 --> Motion detected
+    # state = 2 --> Safety mode
+    # state = 3 --> Ringing doobell / waiting for access
+    # state = 4 --> Unlocked
 
     state = 0
     lock_status = 0 # Initiate locked
@@ -61,8 +61,8 @@ while True:
         # Read angle value from potentiometer
         sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
     
-    # state 1 --> motion detected 
-    if (sensor_value <= 30 and state is 0 and lock_status is 0):
+    # state 1 --> motion detected
+    if (sensor_value <= 30 and state is 0):
         client.publish("door_status_callback", "Motion Detected")
         while (timer >=  0):
             state = 1
@@ -73,7 +73,7 @@ while True:
                 time.sleep(0.4)
         
     # state 2 --> safety mode
-    if (timer is -1 and state is 1 and lock_status is 0):
+    elif (timer is -1 and state is 1 and lock_status is 0):
         client.publish("door_status_callback", "SAFETY MODE")
         state = 2
         while (state is 2):
