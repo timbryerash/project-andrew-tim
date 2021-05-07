@@ -30,7 +30,7 @@ def door_status_callback(client, userdata, msg):
     if lock_status is 0:
     	if door_status == "Motion Detected":
     		with lock:
-    			grove_rgb_lcd.setRGB(255,255,255)
+    			grove_rgb_lcd.setRGB(255,165,0)
     			grove_rgb_lcd.setText_norefresh("Motion Detected \nStatus: Locked  ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 0)
