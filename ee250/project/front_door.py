@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # state = 2 --> Safety mode
 
     state = 0
-    timer = 10
+    timer = 20
 
     #splashscreen
     with lock:
@@ -78,16 +78,23 @@ while True:
                 
     if lock_status == "Locked":    
         # state 1 --> motion detected
-        if (sensor_value <= 30 and state is 0):
+        if (sensor_value <= 30):
             state = 1
-            while (timer >=  0):
+            timer = 20
+            while (state == 1):
                 client.publish("timandrew/door_status", "Motion Detected")
+                sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
                 with lock:
-                    if(lock_status == "Unlocked"):
-                        break
                     setRGB(255,165,0)
                     setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %d" %timer + "s ")
                     timer = timer - 1
+                    if(lock_status == "Unlocked" or timer < 0):
+                        break
+                    if(sensor_value > 30):
+                        setRGB(255,69,0)
+                        setText_norefresh("Alarm           \nDeactivated     ")
+                        time.sleep(2)
+                        break;
                     time.sleep(0.4)
             
         # state 2 --> safety mode
@@ -108,9 +115,11 @@ while True:
                 grove_rgb_lcd.setText_norefresh("SENSOR ACTIVE   \nStatus: "+ lock_status + "  ")
                     
     elif lock_status == "Unlocked":
+        #reinitialize 
         state = 0
+        timer = 20
         with lock:
-            setRGB(255,255,255)
+            setRGB(0,255,0)
             grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: " + lock_status)
             
                 
@@ -118,6 +127,8 @@ while True:
                 
     
             
+
+
 
 
 
