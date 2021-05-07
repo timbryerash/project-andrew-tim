@@ -100,7 +100,7 @@ if __name__ == '__main__':
         		lock_status = 0
         		client.publish("timandrew/homeowner_button", "Locked")
         		with lock:
-        			grove_rgb_lcd.setText_norefresh("\nStatus: Locked  ")
+        			grove_rgb_lcd.setText_norefresh("Locking Door... \nStatus: Locked  ")
         	else:
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
