@@ -45,11 +45,6 @@ def door_status_callback(client, userdata, msg):
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
     			grove_rgb_lcd.setText_norefresh("No Motion       ")
-    else:
-    	print(door_status)
-    	with lock:
-    			grove_rgb_lcd.setRGB(0,255,0)
-    			grove_rgb_lcd.setText_norefresh("Door is Open    ")
 
 def doorbell_callback(client, userdata, msg):
     with lock:
@@ -106,5 +101,5 @@ if __name__ == '__main__':
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
-        			grove_rgb_lcd.setText_norefresh("\nStatus: Unlocked")
+        			grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: Unlocked")
         time.sleep(1)
