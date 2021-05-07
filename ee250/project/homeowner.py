@@ -53,12 +53,20 @@ def doorbell_callback(client, userdata, msg):
 			grove_rgb_lcd.setRGB(0,0,255)
 			grove_rgb_lcd.setText_norefresh("Doorbell Rung   \nStatus: Unlocked")
 			grovepi.digitalWrite(buzzer, 1)
+			time.sleep(0.5)
+			grovepi.digitalWrite(buzzer, 0)
+			time.sleep(0.1)
+			grovepi.digitalWrite(buzzer, 1)
 			time.sleep(0.1)
 			grovepi.digitalWrite(buzzer, 0)
 	else:
 		with lock:
 			grove_rgb_lcd.setRGB(0,0,255)
 			grove_rgb_lcd.setText_norefresh("Doorbell Rung   \nStatus: Locked  ")
+			grovepi.digitalWrite(buzzer, 1)
+			time.sleep(0.5)
+			grovepi.digitalWrite(buzzer, 0)
+			time.sleep(0.1)
 			grovepi.digitalWrite(buzzer, 1)
 			time.sleep(0.1)
 			grovepi.digitalWrite(buzzer, 0)
@@ -112,6 +120,10 @@ if __name__ == '__main__':
         		with lock:
         			grove_rgb_lcd.setRGB(255,255,255)
         			grove_rgb_lcd.setText_norefresh("Locking Door... \nStatus: Locked  ")
+        		with lock:
+        			grovepi.digitalWrite(buzzer, 1)
+        			time.sleep(0.1)
+        			grovepi.digitalWrite(buzzer, 0)
         	else:
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
@@ -119,5 +131,7 @@ if __name__ == '__main__':
         			grove_rgb_lcd.setRGB(0,255,0)
         			grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: Unlocked")
         		with lock:
+        			grovepi.digitalWrite(buzzer, 1)
+        			time.sleep(0.1)
         			grovepi.digitalWrite(buzzer, 0)
         time.sleep(1)
