@@ -102,7 +102,7 @@ while True:
     #state 0 --> sensor active
     else:
         state = 0
-        while(state = 0):
+        while(state == 0):
             client.publish("timandrew/door_status", "SAFETY MODE")
             with lock:
                 setRGB(0,255,0)
