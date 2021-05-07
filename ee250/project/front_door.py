@@ -78,7 +78,7 @@ while True:
                 
     if lock_status == "Locked":    
         # state 1 --> motion detected
-        if (sensor_value <= 30):
+        if (sensor_value <= 30 and state == 0):
             state = 1
             timer = 20
             while (state == 1):
@@ -89,17 +89,18 @@ while True:
                     setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %d" %timer + "s ")
                     timer = timer - 1
                     if(lock_status == "Unlocked" or timer < 0):
+                        state = 2
                         break
                     if(sensor_value > 30):
                         setRGB(255,69,0)
                         setText_norefresh("Alarm           \nDeactivated     ")
                         time.sleep(2)
+                        state = 0 
                         break;
                     time.sleep(0.4)
             
         # state 2 --> safety mode
-        elif (timer is -1 and state is 1):
-            state = 2
+        elif (timer is -1 and state is 2):
             while (state is 2):
                 client.publish("timandrew/door_status", "SAFETY MODE")
                 with lock:
