@@ -17,9 +17,6 @@ def on_connect(client, userdata, flags, rc):
     #subscribe to doorbell then callback
     client.subscribe("timandrew/doorbell")
     client.message_callback_add("timandrew/doorbell", doorbell_callback)
-    #subscribe to motion_sensor then callback
-    client.subscribe("timandrew/motion_sensor")
-    client.message_callback_add("timandrew/motion_sensor", motion_sensor_callback)
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
@@ -71,14 +68,6 @@ def doorbell_callback(client, userdata, msg):
 			time.sleep(0.1)
 			grovepi.digitalWrite(buzzer, 0)
 	time.sleep(1)
-
-def motion_sensor_callback(client, userdata, msg):
-	distance = msg.payload
-#	distance_string = str(msg.payload, "utf-8")
-#	if distance < 30:
-#		with lock:
-#    		grove_rgb_lcd.setRGB(0,255,0)
-#    		grove_rgb_lcd.setText_norefresh(f"{distance_string} cm")
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
