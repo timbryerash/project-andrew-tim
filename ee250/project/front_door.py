@@ -62,7 +62,7 @@ while True:
         sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
     
     # state 1 --> motion detected 
-    if (sensor_value <= 30 and state is 0 lock_status is 0):
+    if (sensor_value <= 30 and state is 0 and lock_status is 0):
         client.publish("door_status_callback", "Motion Detected")
         while (timer >=  0):
             state = 1
