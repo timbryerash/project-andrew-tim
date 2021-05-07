@@ -35,8 +35,6 @@ def door_status_callback(client, userdata, msg):
     			grove_rgb_lcd.setText_norefresh("SAFETY MODE     \nACTIVATED       ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 1)
-    			time.sleep(0.1)
-    			grovepi.digitalWrite(buzzer, 0)
     	else:
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
@@ -87,6 +85,6 @@ if __name__ == '__main__':
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
-        			grove_rgb_lcd.setRGB(0,0,255)
+        			grove_rgb_lcd.setRGB(0,255,0)
         			grove_rgb_lcd.setText_norefresh("Front Door      \nUnlocked        ")
         time.sleep(1)
