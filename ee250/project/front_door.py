@@ -25,11 +25,7 @@ def on_message(client, userdata, msg):
 def homeowner_button_callback(client, userdata, msg):
     global lock_status
     lock_status = str(msg.payload, "utf-8")
-    print(lock_status)
-    #with lock:
-        #setRGB(0,255,0)
-        #setText_norefresh("\nStatus: %s" %lock_status)
-        #time.sleep(1)
+    print("Door status: " + lock_status)
             
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -69,9 +65,8 @@ while True:
     if button_value: 
         client.publish("timandrew/doorbell", "Doorbell Rung")
         with lock:
-            setRGB(255,255,0)
-            grove_rgb_lcd.setText("")
-            setText("Ringing doorbell\nWaiting for resp")
+            setRGB(0,0,255)
+            setText_norefresh("Ringing doorbell\nWaiting for resp")
             time.sleep(2)
                 
     if lock_status == "Locked":    
@@ -81,8 +76,10 @@ while True:
             while (timer >=  0):
                 client.publish("timandrew/door_status", "Motion Detected")
                 with lock:
-                    setRGB(255,0,0)
-                    setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %d" %timer + "s")
+                    if(lock_status == "Unlocked"):
+                        break
+                    setRGB(255,165,0)
+                    setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %d" %timer + "s ")
                     timer = timer - 1
                     time.sleep(0.4)
             
@@ -92,17 +89,19 @@ while True:
             while (state is 2):
                 client.publish("timandrew/door_status", "SAFETY MODE")
                 with lock:
-                    setRGB(255,255,0)
-                    grove_rgb_lcd.setText("SAFETY MODE\nStatus: "+ lock_status)
-                    time.sleep(10)
+                    setRGB(255,0,0)
+                    grove_rgb_lcd.setText_norefresh("SAFETY MODE     \nStatus: "+ lock_status + "  ")
+                    if(lock_status == "Unlocked"):
+                        break
         else:
             #state 0 --> sensor active
             client.publish("timandrew/door_status", "NO MOTION")
             with lock:
-                setRGB(0,255,0)
-                setText_norefresh("SENSOR ACTIVE\nStatus: "+ lock_status)
+                setRGB(255,255,255)
+                grove_rgb_lcd.setText_norefresh("SENSOR ACTIVE   \nStatus: "+ lock_status + "  ")
                     
     elif lock_status == "Unlocked":
+        state = 0
         with lock:
             setRGB(255,255,255)
             grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: " + lock_status)
@@ -112,6 +111,8 @@ while True:
                 
     
             
+
+
 
 
 
