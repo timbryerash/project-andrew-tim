@@ -14,30 +14,19 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
     #subscribe to topics of interest here
-    #subscribe to led then callback
-    client.subscribe("timandrew/led")
-    client.message_callback_add("timandrew/led", ledcallback)
-    #subscribe to lcd then callback
-    client.subscribe("timandrew/lcd")
-    client.message_callback_add("timandrew/lcd", lcdcallback)
+    #subscribe to homeowner_button then callback
+    client.subscribe("timandrew/homeowner_button")
+    client.message_callback_add("timandrew/homeowner_button", homeowner_button_callback)
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
-def lcdcallback(client, userdata, msg):
-    keyvalue = str(msg.payload, "utf-8") #w, a, s, or d
-    print(keyvalue)
-    with lock:
-        grove_rgb_lcd.setText_norefresh(f"{keyvalue}") #display key on lcd
-        if keyvalue == "w":
-            grove_rgb_lcd.setRGB(255,255,255) #make white
-        if keyvalue == "a":
-            grove_rgb_lcd.setRGB(255,0,0) #make red
-        if keyvalue == "s":
-            grove_rgb_lcd.setRGB(0,255,0) #make green
-        if keyvalue == "d":
-            grove_rgb_lcd.setRGB(0,0,255) #make blue
+def homeowner_button_callback(client, userdata, msg):
+    if lock_status:
+        lock_status = 0
+    else:
+    	lock_status = 1
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -63,6 +52,7 @@ if __name__ == '__main__':
     # state = 4 --> ringing doobell / waiting for access
 
     state = 0
+    lock_status = 0 # Initiate locked
     timer = 5
     
 while True:

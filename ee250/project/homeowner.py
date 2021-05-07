@@ -1,7 +1,5 @@
 # Homeowner RPi (Tim)
 
-# BELOW IS CODE FROM LAB 5
-
 import paho.mqtt.client as mqtt
 import time
 import grovepi
@@ -26,11 +24,7 @@ def on_message(client, userdata, msg):
 
 def door_status_callback(client, userdata, msg):
     door_status = str(msg.payload, "utf-8")
-    if door_status == "Front Door Secure":
-    	with lock:
-    		grove_rgb_lcd.setRGB(255,255,255)
-    		grove_rgb_lcd.setText("Front Door\nSecure")
-    elif door_status == "Motion Detected":
+    if door_status == "Motion Detected":
     	with lock:
     		grove_rgb_lcd.setRGB(255,255,255)
     		grove_rgb_lcd.setText("Motion\nDetected")
@@ -42,6 +36,10 @@ def door_status_callback(client, userdata, msg):
     		grovepi.digitalWrite(buzzer, 1)
     		time.sleep(0.1)
     		grovepi.digitalWrite(buzzer, 0)
+    else:
+    	with lock:
+    		grove_rgb_lcd.setRGB(255,255,255)
+    		grove_rgb_lcd.setText("Front Door\nSecure")
 
 def doorbell_callback(client, userdata, msg):
     with lock:
