@@ -62,6 +62,9 @@ if __name__ == '__main__':
     grovepi.pinMode(buzzer, "OUTPUT")
     grovepi.pinMode(button,"INPUT")
 
+    # Initiate in locked mode
+    lock_status = 0
+
     #splashscreen
     with lock:
         grove_rgb_lcd.setRGB(255,255,255)
@@ -73,5 +76,8 @@ if __name__ == '__main__':
         with lock:
             buttonvalue = grovepi.digitalRead(button) #check button reading
         if buttonvalue:
-            client.publish("timandrew/homeowner_button", "Button pressed") #if button is pressed, publish string to button topic
+        	if lock_status:
+        		client.publish("timandrew/homeowner_button", "Lock door")
+        	else:
+        		client.publish("timandrew/homeowner_button", "Unlock door")
         time.sleep(1)
