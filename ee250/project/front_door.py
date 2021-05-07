@@ -25,12 +25,11 @@ def on_message(client, userdata, msg):
 def homeowner_button_callback(client, userdata, msg):
     lock_status = str(msg.payload, "utf-8")
     print(lock_status)
-    while lock_status == "Unlocked":
-        client.publish("timandrew/door_status", "Front Door\nSecure")
+    if lock_status == "Unlocked":
         with lock:
             setRGB(0,255,0)
             setText_norefresh("WELCOME HOME")
-            time.sleep(10)
+            time.sleep(2)
             
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -91,7 +90,6 @@ while True:
         
     # state 2 --> safety mode
     elif (timer is -1 and state is 1):
-        client.publish("timandrew/door_status", "SAFETY MODE")
         state = 2
         while (state is 2):
             with lock:
@@ -102,7 +100,6 @@ while True:
     #state 0 --> sensor active
     else:
         state = 0
-        client.publish("timandrew/door_status", "Front Door\nSecure")
         with lock:
             setRGB(0,255,0)
             setText_norefresh("SENSOR ACTIVE   ")
@@ -111,6 +108,8 @@ while True:
                 
     
             
+
+
 
 
 
