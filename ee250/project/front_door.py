@@ -63,6 +63,7 @@ while True:
     
     # state 1 --> motion detected 
     if (sensor_value <= 30 and state is 0):
+        client.publish("door_status_callback", "Motion Detected")
         while (timer >=  0):
             state = 1
             with lock:
@@ -73,6 +74,7 @@ while True:
         
     # state 2 --> safety mode
     if (timer is -1 and state is 1):
+        client.publish("door_status_callback", "SAFETY MODE")
         state = 2
         while (state is 2):
             with lock:
@@ -80,8 +82,9 @@ while True:
                 grove_rgb_lcd.setText("SAFETY MODE \nWaiting for resp")
                 time.sleep(10)
         
-    # state 4 --> waiting for access
+    # state 4 : doorbell --> waiting for access
     elif (grovepi.digitalRead(button) is 1 and state is 0):
+        client.publish("doorbell_callback", "Doorbell Pressed")
         with lock:
             setRGB(255,255,0)
             grove_rgb_lcd.setText("")
@@ -92,7 +95,9 @@ while True:
         state = 0
         with lock:
             setRGB(0,255,0)
-            setText_norefresh("SENSOR ACTIVE   " + "" + "\n%dcm             " %sensor_value)
-            time.sleep(0.2)
+            setText_norefresh("SENSOR ACTIVE   ")
+            
+
+
 
 
