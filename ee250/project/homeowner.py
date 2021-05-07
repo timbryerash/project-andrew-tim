@@ -56,7 +56,7 @@ def doorbell_callback(client, userdata, msg):
     		grovepi.digitalWrite(buzzer, 0)
     time.sleep(1)
 
-# def motion_sensor_callback(client, userdata, msg):
+def motion_sensor_callback(client, userdata, msg):
 #	distance = msg.payload
 #	distance_string = str(msg.payload, "utf-8")
 #	if distance < 30:
