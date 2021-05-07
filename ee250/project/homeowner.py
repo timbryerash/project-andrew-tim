@@ -75,8 +75,8 @@ if __name__ == '__main__':
         if buttonvalue:
             client.publish("timandrew/homeowner_button", "Button pressed") #if button is pressed, publish string to button topic
         with lock:
-    		grove_rgb_lcd.setRGB(255,0,0)
-    		grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
+        	grove_rgb_lcd.setRGB(255,0,0)
+        	grove_rgb_lcd.setText("SAFETY MODE\nACTIVATED")
     	with lock:
     		grovepi.digitalWrite(buzzer, 1)
     		time.sleep(0.1)
