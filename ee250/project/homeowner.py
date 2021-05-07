@@ -100,13 +100,14 @@ if __name__ == '__main__':
         		lock_status = 0
         		client.publish("timandrew/homeowner_button", "Locked")
         		with lock:
-        			grove_rgb_lcd.setText_norefresh("Locking Door... \nStatus: Locked  ")
+        			grove_rgb_lcd.setRGB(255,255,255)
+        			grove_rgb_lcd.setText("Locking Door... \nStatus: Locked  ")
         	else:
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
         			grove_rgb_lcd.setRGB(0,255,0)
-        			grove_rgb_lcd.setText_norefresh("Door is Open    \nStatus: Unlocked")
+        			grove_rgb_lcd.setText("Door is Open    \nStatus: Unlocked")
         		with lock:
         			grovepi.digitalWrite(buzzer, 0)
         time.sleep(1)
