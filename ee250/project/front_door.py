@@ -23,26 +23,23 @@ def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
 def homeowner_button_callback(client, userdata, msg):
-    if lock_status:
-        lock_status = 0
-    else:
-    	lock_status = 1
+    lock_status = str(msg.payload, "utf-8")
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
-    client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
+     client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
     client.loop_start()
 
     #initiate ports
     ultrasonic_ranger = 3
+    button = 2
     full_angle = 300
     adc_ref = 5
     grove_vcc = 5
-    button = 2
-
+    
     grovepi.pinMode(button,"INPUT")
 
     # state = 0 --> Sensor active
@@ -50,7 +47,6 @@ if __name__ == '__main__':
     # state = 2 --> Safety mode
 
     state = 0
-    lock_status = 0 # Initiate locked
     timer = 20
     
     while True:
@@ -72,7 +68,7 @@ if __name__ == '__main__':
                 time.sleep(2)
             
         # if the door is locked
-        if lock_status is 0:
+        if lock_status is "0":
             
             # state 1 --> motion detected
             if (sensor_value <= 30 and state is 0):
@@ -86,7 +82,7 @@ if __name__ == '__main__':
                         time.sleep(0.4)
                 
             # state 2 --> safety mode
-            elif (timer is -1 and state is 1 and lock_status is 0):
+            elif (timer is -1 and state is 1):
                 client.publish("door_status_callback", "SAFETY MODE")
                 state = 2
                 while (state is 2):
