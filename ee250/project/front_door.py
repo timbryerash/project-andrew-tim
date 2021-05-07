@@ -50,7 +50,14 @@ if __name__ == '__main__':
 
     state = 0
     timer = 10
-    
+
+    #splashscreen
+    with lock:
+    	grove_rgb_lcd.setRGB(255,255,255)
+    	grove_rgb_lcd.setText("Tim & Andrew\nFront Door")
+    	time.sleep(2)
+    	grove_rgb_lcd.setText("")
+
 while True:
     
     with lock:
