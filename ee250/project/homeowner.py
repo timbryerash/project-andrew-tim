@@ -11,12 +11,15 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
     #subscribe to topics of interest here
-    #subscribe to ultrasonicRanger then callback
+    #subscribe to door_status then callback
     client.subscribe("timandrew/door_status")
     client.message_callback_add("timandrew/door_status", door_status_callback)
-    #subscribe to button then callback
+    #subscribe to doorbell then callback
     client.subscribe("timandrew/doorbell")
     client.message_callback_add("timandrew/doorbell", doorbell_callback)
+    #subscribe to motion_sensor then callback
+    client.subscribe("timandrew/motion_sensor")
+    client.message_callback_add("timandrew/motion_sensor", motion_sensor_callback)
 
 #Default message callback. Please use custom callbacks.
 def on_message(client, userdata, msg):
@@ -28,26 +31,38 @@ def door_status_callback(client, userdata, msg):
     	if door_status == "Motion Detected":
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
-    			grove_rgb_lcd.setText_norefresh("Motion          \nDetected        ")
+    			grove_rgb_lcd.setText_norefresh("Motion Detected ")
     	elif door_status == "SAFETY MODE":
     		with lock:
     			grove_rgb_lcd.setRGB(255,0,0)
-    			grove_rgb_lcd.setText_norefresh("SAFETY MODE     \nACTIVATED       ")
+    			grove_rgb_lcd.setText_norefresh("SAFETY MODE     ")
     		with lock:
     			grovepi.digitalWrite(buzzer, 1)
     	else:
     		with lock:
     			grove_rgb_lcd.setRGB(255,255,255)
-    			grove_rgb_lcd.setText_norefresh("Sensor          \nActive          ")
+    			grove_rgb_lcd.setText_norefresh("No Motion       ")
+    else:
+    	with lock:
+    			grove_rgb_lcd.setRGB(0,255,0)
+    			grove_rgb_lcd.setText_norefresh("Door is Open    ")
 
 def doorbell_callback(client, userdata, msg):
     with lock:
-    		grove_rgb_lcd.setRGB(0,255,0)
-    		grove_rgb_lcd.setText_norefresh("Doorbell        \nRung            ")
+    		grove_rgb_lcd.setRGB(0,0,255)
+    		grove_rgb_lcd.setText_norefresh("Doorbell Rung   ")
     		grovepi.digitalWrite(buzzer, 1)
     		time.sleep(0.1)
     		grovepi.digitalWrite(buzzer, 0)
     time.sleep(1)
+
+# def motion_sensor_callback(client, userdata, msg):
+#	distance = msg.payload
+#	distance_string = str(msg.payload, "utf-8")
+#	if distance < 30:
+#		with lock:
+#    		grove_rgb_lcd.setRGB(0,255,0)
+#    		grove_rgb_lcd.setText_norefresh(f"{distance_string} cm")
 
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
@@ -81,10 +96,11 @@ if __name__ == '__main__':
         	if lock_status:
         		lock_status = 0
         		client.publish("timandrew/homeowner_button", "Locked")
+        		with lock:
+        			grove_rgb_lcd.setText_norefresh("\nStatus: Locked  ")
         	else:
         		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         		with lock:
-        			grove_rgb_lcd.setRGB(0,255,0)
-        			grove_rgb_lcd.setText_norefresh("Front Door      \nUnlocked        ")
+        			grove_rgb_lcd.setText_norefresh("\nStatus: Unlocked")
         time.sleep(1)
