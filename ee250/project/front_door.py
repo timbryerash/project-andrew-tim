@@ -25,7 +25,13 @@ def on_message(client, userdata, msg):
 def homeowner_button_callback(client, userdata, msg):
     lock_status = str(msg.payload, "utf-8")
     print(lock_status)
-    
+    while lock_status == "Unlocked":
+        client.publish("timandrew/door_status", "Front Door\nSecure")
+        with lock:
+            setRGB(0,255,0)
+            setText_norefresh("WELCOME HOME")
+            time.sleep(10)
+            
 if __name__ == '__main__':
     #this section is covered in publisher_and_subscriber_example.py
     client = mqtt.Client()
@@ -62,54 +68,51 @@ while True:
         sensor_value = grovepi.ultrasonicRead(ultrasonic_ranger)
         
     if button_value: 
-        client.publish("doorbell_callback", "Doorbell Pressed")
+        client.publish("timandrew/doorbell", "Doorbell Rung")
         with lock:
             setRGB(255,255,0)
             grove_rgb_lcd.setText("")
-            setText("Ringing doorbell \nWaiting for resp")
+            setText("Ringing doorbell\nWaiting for resp")
             time.sleep(2)
         
     # if the door is locked
-    if lock_status is "Locked":
+    #if lock_status is "Locked":
         
-        # state 1 --> motion detected
-        if (sensor_value <= 30 and state is 0):
-            client.publish("door_status_callback", "Motion Detected")
-            while (timer >=  0):
-                state = 1
-                with lock:
-                    setRGB(255,0,0)
-                    setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %ds" %timer)
-                    timer = timer - 1
-                    time.sleep(0.4)
-            
-        # state 2 --> safety mode
-        elif (timer is -1 and state is 1):
-            client.publish("door_status_callback", "SAFETY MODE")
-            state = 2
-            while (state is 2):
-                with lock:
-                    setRGB(255,255,0)
-                    grove_rgb_lcd.setText("SAFETY MODE \nWaiting for resp")
-                    time.sleep(10)
-                    
-        #state 0 --> sensor active
-        else:
-            state = 0
-            client.publish("door_status_callback", "Front Door\nSecure")
+    # state 1 --> motion detected
+    if (sensor_value <= 30 and state is 0):
+        client.publish("timandrew/door_status", "Motion Detected")
+        while (timer >=  0):
+            state = 1
             with lock:
-                setRGB(0,255,0)
-                setText_norefresh("SENSOR ACTIVE   ")
+                setRGB(255,0,0)
+                setText_norefresh("" + "OBJECT DETECTED!" + "\nSAFE MODE IN %ds" %timer)
+                timer = timer - 1
+                time.sleep(0.4)
+        
+    # state 2 --> safety mode
+    elif (timer is -1 and state is 1):
+        client.publish("timandrew/door_status", "SAFETY MODE")
+        state = 2
+        while (state is 2):
+            with lock:
+                setRGB(255,255,0)
+                grove_rgb_lcd.setText("SAFETY MODE \nWaiting for resp")
+                time.sleep(10)
                 
-    # if Tim unlocks the front door
-    elif lock_status is "Unlocked":
-        client.publish("door_status_callback", "Front Door\nSecure")
+    #state 0 --> sensor active
+    else:
+        state = 0
+        client.publish("timandrew/door_status", "Front Door\nSecure")
         with lock:
-                setRGB(0,255,0)
-                setText_norefresh("WELCOME HOME")
+            setRGB(0,255,0)
+            setText_norefresh("SENSOR ACTIVE   ")
                 
-    client.publish("door_status_callback", "Front Door\nSecure")
+
+                
+    
             
+
+
 
 
 
