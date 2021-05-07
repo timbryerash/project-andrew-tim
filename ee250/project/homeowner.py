@@ -77,7 +77,9 @@ if __name__ == '__main__':
             buttonvalue = grovepi.digitalRead(button) #check button reading
         if buttonvalue:
         	if lock_status:
+        		lock_status = 0
         		client.publish("timandrew/homeowner_button", "Locked")
         	else:
+        		lock_status = 1
         		client.publish("timandrew/homeowner_button", "Unlocked")
         time.sleep(1)
